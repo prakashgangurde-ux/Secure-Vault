@@ -4,8 +4,10 @@ Share secrets that self‑destruct. SecureVault is a privacy‑first ephemeral s
 
 Live demo: https://hawks-securevault-231125.netlify.app/
 
-Quick QR (opens the demo)
+
 ![Open SecureVault](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://hawks-securevault-231125.netlify.app/)
+
+Quick QR (opens the demo)
 
 Table of contents
 - Features
@@ -59,7 +61,7 @@ export const firebaseConfig = {
 
 Security rules (recommended)
 Firestore — restrict reads/writes to the authenticated owner:
-
+'''
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -68,9 +70,11 @@ service cloud.firestore {
     }
   }
 }
+'''
 
 Storage — enforce ownership and 5MB per file:
 
+'''
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
@@ -82,6 +86,7 @@ service firebase.storage {
     }
   }
 }
+'''
 
 Enable Firestore TTL
 - In Firestore → Data → TTL, create a policy:
