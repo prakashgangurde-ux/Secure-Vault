@@ -60,6 +60,7 @@ export const firebaseConfig = {
 Security rules (recommended)
 Firestore — restrict reads/writes to the authenticated owner:
 
+```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -68,9 +69,11 @@ service cloud.firestore {
     }
   }
 }
+```
 
 Storage — enforce ownership and 5MB per file:
 
+```
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
@@ -82,6 +85,7 @@ service firebase.storage {
     }
   }
 }
+```
 
 Enable Firestore TTL
 - In Firestore → Data → TTL, create a policy:
