@@ -5,7 +5,7 @@ Share secrets that self‑destruct. SecureVault is a privacy‑first ephemeral s
 Live demo: https://hawks-securevault-231125.netlify.app/
 
 
-![Open SecureVault](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://hawks-securevault-231125.netlify.app/)
+![Open SecureVault](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://https://hawks-securevault-231125.netlify.app)
 
 Quick QR (opens the demo)
 
