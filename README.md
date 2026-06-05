@@ -1,131 +1,331 @@
 # SecureVault 🛡️
 
-Share secrets that self‑destruct. SecureVault is a privacy‑first ephemeral storage app for temporary notes and files. Data is encrypted in transit and access is gated via Firebase Authentication. Secrets automatically expire (24–72 hours) and are removed.
+A privacy-first secure file and note sharing platform that automatically destroys stored content after a specified expiration period.
 
-Live demo: https://hawks-securevault-231125.netlify.app/
+SecureVault enables users to securely store sensitive notes and files with Firebase Authentication, Firestore TTL policies, and Firebase Storage integration.
 
+## Live Demo
 
-![Open SecureVault](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://https://hawks-securevault-231125.netlify.app)
+https://hawks-securevault-231125.netlify.app/
 
-Quick QR (opens the demo)
+---
 
-Table of contents
-- Features
-- Tech stack
-- Quick start
-- Firebase configuration
-- Security rules (recommended)
-- Deployment
-- Usage
-- Troubleshooting
-- Contributing & License
+## Overview
 
-Features
-- Ephemeral storage: Secrets expire after a configurable duration (1–72 hours).
-- Text & file secrets: Store secure notes or upload files (any type).
-- Limits: 5 MB max per file, 50 MB total vault size per user (free tier).
-- Auth: Email/password via Firebase Auth.
-- Storage & metadata: Firebase Storage + Firestore with TTL (Time To Live).
-- Modern UI: Tailwind CSS, lightweight, client-side-first.
+SecureVault is designed for users who need temporary and secure storage for confidential information.
 
-Tech stack
-- Frontend: HTML5 + Vanilla JavaScript (ES Modules)
-- Styling: Tailwind CSS (via CDN)
-- Icons: Lucide Icons
-- Backend: Firebase (Authentication, Firestore, Storage)
+Unlike traditional cloud storage platforms, SecureVault automatically removes stored content after a user-defined expiration period, reducing long-term exposure risks.
 
-Quick start
-1. Clone the repo
-   git clone https://github.com/your-username/secure-vault.git
-   cd secure-vault
-2. Add Firebase config (see below).
-3. Serve a static server (required for ES modules):
-   - VS Code: Live Server → Go Live
-   - Python: python3 -m http.server 8000
-   - Node: npx serve .
+### Use Cases
 
-Firebase configuration
-Create `firebaseConfig.js` in the project root with your Firebase web config:
+* Temporary password sharing
+* One-time document exchange
+* Secure personal notes
+* Temporary project collaboration
+* Short-lived file storage
+
+---
+
+## Features
+
+### Secure Authentication
+
+* Firebase Authentication
+* Email and password login
+* User-specific vault isolation
+
+### Ephemeral Storage
+
+* Automatic expiration
+* Configurable self-destruct timer
+* Firestore TTL integration
+* Automatic cleanup process
+
+### File Storage
+
+* Upload files up to 5 MB
+* Support for multiple file formats
+* Secure Firebase Storage integration
+
+### Secure Notes
+
+* Store confidential text notes
+* Time-based automatic deletion
+* User-specific access controls
+
+### Usage Limits
+
+| Feature           | Limit      |
+| ----------------- | ---------- |
+| Maximum File Size | 5 MB       |
+| Vault Capacity    | 50 MB      |
+| Secret Lifetime   | 1–72 Hours |
+
+### Modern User Interface
+
+* Responsive design
+* Tailwind CSS
+* Mobile-friendly experience
+* Lightweight frontend architecture
+
+---
+
+## Technology Stack
+
+### Frontend
+
+| Technology              | Purpose               |
+| ----------------------- | --------------------- |
+| HTML5                   | Application Structure |
+| JavaScript (ES Modules) | Application Logic     |
+| Tailwind CSS            | Styling               |
+| Lucide Icons            | UI Icons              |
+
+### Backend Services
+
+| Service                 | Purpose              |
+| ----------------------- | -------------------- |
+| Firebase Authentication | User Authentication  |
+| Firestore               | Metadata Storage     |
+| Firebase Storage        | File Storage         |
+| Firestore TTL           | Automatic Expiration |
+
+---
+
+## Architecture
+
+```text
+User
+ │
+ ▼
+SecureVault Frontend
+ │
+ ├── Firebase Authentication
+ ├── Firestore Database
+ └── Firebase Storage
+        │
+        ▼
+ Automatic TTL Cleanup
+```
+
+---
+
+## Screenshots
+
+Add screenshots of:
+
+* Login Screen
+* Dashboard
+* Upload Secret
+* Vault Items List
+* Expiration Settings
+
+Example:
+
+```text
+screenshots/
+├── login.png
+├── dashboard.png
+├── upload-file.png
+└── vault-items.png
+```
+
+---
+
+## Project Structure
+
+```text
+secure-vault/
+│
+├── index.html
+├── app.js
+├── firebaseConfig.js
+│
+├── assets/
+├── screenshots/
+│
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/prakashgangurde-ux/Secure-Vault.git
+
+cd Secure-Vault
+```
+
+### Configure Firebase
+
+Create:
 
 ```javascript
 // firebaseConfig.js
+
 export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
   storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 ```
 
-Security rules (recommended)
-Firestore — restrict reads/writes to the authenticated owner:
+### Run Locally
 
+Using Python:
+
+```bash
+python -m http.server 8000
 ```
+
+Or:
+
+```bash
+npx serve .
+```
+
+Open:
+
+```text
+http://localhost:8000
+```
+
+---
+
+## Firebase Security Rules
+
+### Firestore
+
+```javascript
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     match /artifacts/{appId}/users/{userId}/vault_items/{document} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write:
+      if request.auth != null
+      && request.auth.uid == userId;
     }
   }
 }
 ```
 
-Storage — enforce ownership and 5MB per file:
+### Firebase Storage
 
-```
+```javascript
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
     match /users/{userId}/{allPaths=**} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null
-        && request.auth.uid == userId
-        && request.resource.size < 5 * 1024 * 1024;
+      allow read:
+      if request.auth != null
+      && request.auth.uid == userId;
+
+      allow write:
+      if request.auth != null
+      && request.auth.uid == userId
+      && request.resource.size < 5 * 1024 * 1024;
     }
   }
 }
 ```
 
-Enable Firestore TTL
-- In Firestore → Data → TTL, create a policy:
-  Collection group: `vault_items`
-  Timestamp field: `ttlDate`
+---
 
-Storage limits enforced client-side
-- Per-file: 5 MB
-- Per-user vault: 50 MB (client uses metadata to calculate current usage)
+## Firestore TTL Configuration
 
-Deployment
-- Static-ready app (index.html + JS). Deploy to Netlify, Vercel, or GitHub Pages.
-- For Netlify:
-  1. Ensure `firebaseConfig.js` is included or provide runtime config.
-  2. Drag & drop folder or connect the repo → deploy.
-- Live demo: https://hawks-securevault-231125.netlify.app/
+Enable automatic deletion:
 
-QR code option
-- The README embeds a simple QR via https://api.qrserver.com. Replace that image URL with your own hosted QR image if preferred.
-- To generate a custom QR: https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=YOUR_URL
+1. Open Firebase Console
+2. Navigate to Firestore Database
+3. Open TTL Policies
+4. Create Policy
 
-Usage notes
-- Create an account (email/password) or sign in.
-- Upload files (max 5MB) or paste a secure note.
-- Choose a self‑destruct duration (1–72 hours). The app sets `ttlDate` on Firestore for auto-deletion.
-- Manual deletion removes both Firestore metadata and the Storage object (if present).
+```text
+Collection Group: vault_items
+Timestamp Field: ttlDate
+```
 
-Troubleshooting
-- "Config missing": create `firebaseConfig.js` with correct values and reload.
-- Upload fails: check file size and storage rules; ensure vault quota not exceeded.
-- Auth errors: enable Email/Password provider in Firebase Console.
+Expired secrets will be removed automatically by Firebase.
 
-Contributing
-- PRs and issues welcome. Keep changes small and document behavior.
-- Respect privacy-first design choices.
+---
 
-License
-- MIT License. See LICENSE file.
+## Security Highlights
 
-Contact
-- Feedback / bug reports: feedback@securevault.app
+* User-isolated storage
+* Firebase Authentication
+* Access-controlled Firestore rules
+* Storage ownership validation
+* Automatic secret expiration
+* No shared public vaults
+* Minimal data retention model
+
+---
+
+## Future Enhancements
+
+* End-to-end encryption
+* Password-protected secret sharing
+* Secure shareable links
+* Multi-factor authentication
+* Download tracking
+* Secure audit logs
+* File preview support
+* Progressive Web App (PWA)
+
+---
+
+## Deployment
+
+SecureVault can be deployed on:
+
+* Netlify
+* Vercel
+* Firebase Hosting
+* GitHub Pages
+
+Current deployment:
+
+https://hawks-securevault-231125.netlify.app/
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+Steps:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Push changes
+5. Open a pull request
+
+---
+
+## License
+
+MIT License
+
+See the LICENSE file for details.
+
+---
+
+## Author
+
+Prakash Gangurde
+
+GitHub:
+https://github.com/prakashgangurde-ux
+
+Building privacy-focused applications with modern web technologies.
